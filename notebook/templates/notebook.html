@@ -63,6 +63,53 @@ data-notebook-path="{{notebook_path}}"
               <span class="kernel_indicator_name">Kernel</span>
               <i id="kernel_indicator_icon"></i>
             </p>
+            <!--share-->
+            <div class="relative inline-block dropdown dropdown-box pull-right">
+                <div id="notebooks_share" class="navbar-text indicator_area dropdown-toggle" data-toggle="dropdown" data-loading-text='<i class="fa fa-check"></i>分享成功'>
+                  <i class="fa fa-share-alt"></i>
+                  <span class="kernel_indicator_name">分享</span>
+                </div>
+                <!--dropdown -->
+                <div class="dropdown-menu tt_dropdown_menu">
+                    <div class="dropdown-box-body create-share">
+                        <div class="craete-share-form">
+                            <form class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label" for="share-form-title">标题</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" id="share-form-title">
+                                        <div class="help-block"></div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label" for="share-form-desc">摘要</label>
+                                    <div class="col-sm-10">
+                                        <textarea class="form-control" id="share-form-desc" rows="4"></textarea>
+                                        <div class="help-block"></div>
+                                    </div>
+                                </div>
+                                <!-- <div class="form-group">
+                                    <label class="col-sm-2 control-label">Chart</label>
+                                    <div class="col-sm-10">
+                                        <div class="image-selector"><div class="image-selector-item active"><div class="thumb"><img src=""></div></div></div>
+                                    </div>
+                                </div> -->
+                            </form>
+                        </div>
+                    </div>
+                    <div class="btns pull-right tt_btns">
+                        <button class="cancel btn btn-link">取消</button>
+                        <button class="submit btn btn-primary" data-loading-text="分享中...">确定</button>
+                    </div>
+                    <div class="msg"></div>
+                </div>
+
+            </div>
+
+
+
+
+
             <i id="readonly-indicator" class="navbar-text" title='This notebook is read-only'>
                 <span class="fa-stack">
                     <i class="fa fa-save fa-stack-1x"></i>
@@ -142,7 +189,7 @@ data-notebook-path="{{notebook_path}}"
                         <li id="edit_nb_metadata"><a href="#">Edit Notebook Metadata</a></li>
                     </ul>
                 </li>
-                <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">View</a>
+                <!-- <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">View</a>
                     <ul id="view_menu" class="dropdown-menu">
                         <li id="toggle_header"
                             title="Show/Hide the IPython Notebook logo and notebook title (above menu bar)">
@@ -151,7 +198,7 @@ data-notebook-path="{{notebook_path}}"
                             title="Show/Hide the action icons (below menu bar)">
                             <a href="#">Toggle Toolbar</a></li>
                     </ul>
-                </li>
+                </li> -->
                 <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">Insert</a>
                     <ul id="insert_menu" class="dropdown-menu">
                         <li id="insert_cell_above"
@@ -325,5 +372,10 @@ data-notebook-path="{{notebook_path}}"
 <script src="{{ static_url("components/text-encoding/lib/encoding.js") }}" charset="utf-8"></script>
 
 <script src="{{ static_url("notebook/js/main.min.js") }}" charset="utf-8"></script>
+<script>
+    $(function () {
+  $('[data-toggle="popover"]').popover()
+})
+</script>
 
 {% endblock %}

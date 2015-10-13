@@ -106,7 +106,7 @@ define([
                     var res = JSON.parse(data);
                     var args = '?path='+encodeURIComponent(res.path)+'&upyun_path='+encodeURIComponent(res.upyun_path);
                     var online = window.location.host.indexOf('joinquant.com') >= 0;
-                    var server = online ? "https://www.joinquant.com" : "http://101.200.187.27:8000";
+                    var server = online ? "https://www.joinquant.com" : "http://www.kuanke100.com";
                     console.log("Shared notebook url:"+ 'http://joinquant-file.b0.upaiyun.com'+res.upyun_path)
                     new_window.location = server+'/community/post/edit'+args;
                     cb(true);

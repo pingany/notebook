@@ -72,9 +72,25 @@ def get_exporter(format, **kwargs):
     except Exception as e:
         raise web.HTTPError(500, "Could not construct Exporter: %s" % e)
 
+def md5(c):
+    import hashlib
+    return hashlib.md5(c.encode('utf-8')).hexdigest()
+    
+def upload_upyun(path, c):
+    import upyun
+    up = upyun.UpYun('joinquant-file', 'joinquant', 'xlx20150527', timeout=30, endpoint=upyun.ED_AUTO)
+    up.put(path, c)
+    pass
+
 class NbconvertFileHandler(IPythonHandler):
 
     SUPPORTED_METHODS = ('GET',)
+
+    # upload a file, return path
+    def upload_file(self, content):
+        path = '/%s/share-%s.html' % (self.get_current_user(), md5(content))
+        upload_upyun(path, content)
+        return path
     
     @web.authenticated
     def get(self, format, path):
@@ -119,7 +135,15 @@ class NbconvertFileHandler(IPythonHandler):
             self.set_header('Content-Type',
                             '%s; charset=utf-8' % exporter.output_mimetype)
 
-        self.finish(output)
+        if self.get_argument('upload', 'false').lower() == 'true':
+            import json
+            uploaded_path = self.upload_file(output)
+            self.finish(json.dumps({
+                'path':path,
+                'upyun_path':uploaded_path,
+            }))
+        else:
+            self.finish(output)
 
 class NbconvertPostHandler(IPythonHandler):
     SUPPORTED_METHODS = ('POST',)

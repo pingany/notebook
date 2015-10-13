@@ -65,7 +65,7 @@ data-notebook-path="{{notebook_path}}"
             </p>
             <!--share-->
             <div class="relative inline-block dropdown dropdown-box pull-right">
-                <div id="notebooks_share" class="navbar-text indicator_area dropdown-toggle" data-toggle="dropdown" data-loading-text='<i class="fa fa-check"></i>分享成功'>
+                <div id="share_notebook" class="navbar-text indicator_area" data-loading-text='<i class="fa fa-check"></i>分享成功'>
                   <i class="fa fa-share-alt"></i>
                   <span class="kernel_indicator_name">分享</span>
                 </div>
@@ -99,7 +99,7 @@ data-notebook-path="{{notebook_path}}"
                     </div>
                     <div class="btns pull-right tt_btns">
                         <button class="cancel btn btn-link">取消</button>
-                        <button class="submit btn btn-primary" data-loading-text="分享中...">确定</button>
+                        <button class="submit btn btn-primary" id='share-submit' data-loading-text="分享中...">确定</button>
                     </div>
                     <div class="msg"></div>
                 </div>

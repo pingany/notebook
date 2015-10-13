@@ -86,6 +86,47 @@ define([
         }
     };
 
+    MenuBar.prototype.share_notebook = function(cb, title, desc) {
+        var notebook_path = this.notebook.notebook_path;
+        var url = utils.url_join_encode(
+            this.base_url,
+            'nbconvert',
+            'html',
+            notebook_path
+        ) + "?download=false&upload=true";
+        var new_window = window.open('', IPython._target);
+
+        var share = function() {
+            console.log("Share notebook: url = " + url + ', title = '+ title + " dsec = " + desc);
+
+            $.ajax(url, {
+                type: "GET",
+                success:function(data, status, xhr) {
+                    console.log("Share notebook, ajax return:"+data);
+                    var res = JSON.parse(data);
+                    var args = '?path='+encodeURIComponent(res.path)+'&upyun_path='+encodeURIComponent(res.upyun_path);
+                    var online = window.location.host.indexOf('joinquant.com') >= 0;
+                    var server = online ? "https://www.joinquant.com" : "http://101.200.187.27:8000";
+                    console.log("Shared notebook url:"+ 'http://joinquant-file.b0.upaiyun.com'+res.upyun_path)
+                    new_window.location = server+'/community/post/edit'+args;
+                    cb(true);
+                },
+                error: function(xhr, status, error) {
+                    alert("分享失败:"+error);
+                    cb(false);
+                },
+            });
+        };
+        if (this.notebook.dirty) {
+            console.log("Save notebook before share");
+            this.notebook.save_notebook().then(function() {
+                share();
+            });
+        } else {
+            share();
+        }
+    };
+
     MenuBar.prototype._size_header = function() {
         /** 
          * Update header spacer size.
@@ -131,6 +172,20 @@ define([
 
         this.element.find('#download_html').click(function () {
             that._nbconvert('html', true);
+        });
+
+        // this.element.find('#share-submit').click(function () {
+        //     var btn = $(this);
+        //     btn.button('loading');
+        //     that.share_notebook(that.element.find('#share-form-title').val(), that.element.find('#share-form-desc').val(), function(succeed) {
+        //         btn.button('reset');
+        //     });
+        // });
+
+        this.element.find('#share_notebook').click(function() {
+            that.share_notebook(function(succeed) {
+                // pass
+            });
         });
 
         this.element.find('#download_markdown').click(function () {

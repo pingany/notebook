@@ -74,23 +74,17 @@ def get_exporter(format, **kwargs):
 
 def md5(c):
     import hashlib
-    return hashlib.md5(c.encode('utf-8')).hexdigest()
+    return hashlib.md5(c).hexdigest()
     
-def upload_upyun(path, c):
-    import upyun
-    up = upyun.UpYun('joinquant-file', 'joinquant', 'xlx20150527', timeout=30, endpoint=upyun.ED_AUTO)
-    up.put(path, c)
-    pass
-
 class NbconvertFileHandler(IPythonHandler):
 
     SUPPORTED_METHODS = ('GET',)
 
     # upload a file, return path
     def upload_file(self, content):
-        path = '/%s/share-%s.html' % (self.get_current_user(), md5(content))
-        upload_upyun(path, content)
-        return path
+        path = '/share/%s.html' % (md5(content))
+        from research_api import upload2yun
+        return upload2yun(path, content)
     
     @web.authenticated
     def get(self, format, path):
@@ -137,7 +131,7 @@ class NbconvertFileHandler(IPythonHandler):
 
         if self.get_argument('upload', 'false').lower() == 'true':
             import json
-            uploaded_path = self.upload_file(output)
+            uploaded_path = self.upload_file(output.encode('utf-8'))
             self.finish(json.dumps({
                 'path':path,
                 'upyun_path':uploaded_path,

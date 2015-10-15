@@ -94,7 +94,7 @@ define([
             'html',
             notebook_path
         ) + "?download=false&upload=true";
-        var new_window = window.open('', IPython._target);
+        // var new_window = window.open('', IPython._target);
 
         var share = function() {
             console.log("Share notebook: url = " + url + ', title = '+ title + " dsec = " + desc);
@@ -108,23 +108,28 @@ define([
                     var online = window.location.host.indexOf('joinquant.com') >= 0;
                     var server = online ? "https://www.joinquant.com" : "http://www.kuanke100.com";
                     console.log("Shared notebook url:"+ 'http://joinquant-file.b0.upaiyun.com'+res.upyun_path)
-                    new_window.location = server+'/community/post/edit'+args;
+                    var url = server+'/community/post/edit'+args ;
                     cb(true);
+                    window.open(url, '_blank');
                 },
                 error: function(xhr, status, error) {
                     alert("分享失败:"+error);
                     cb(false);
                 },
+                async: false, // 否则window.open会被屏蔽
+                timeout: 3000, // 3 seconds
             });
         };
-        if (this.notebook.dirty) {
-            console.log("Save notebook before share");
-            this.notebook.save_notebook().then(function() {
-                share();
-            });
-        } else {
-            share();
-        }
+        // 如果文档为保存, 无法保存, 因为保存是异步操作, 在click回调函数之外执行window.open会被屏蔽
+        share();
+        // if (this.notebook.dirty) {
+        //     console.log("Save notebook before share");
+        //     this.notebook.save_notebook().then(function() {
+        //         share();
+        //     });
+        // } else {
+        //     share();
+        // }
     };
 
     MenuBar.prototype._size_header = function() {

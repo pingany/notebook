@@ -26,7 +26,7 @@ data-terminals-available="{{terminals_available}}"
           <div id="notebook_toolbar" class="row">
             <div class="col-sm-8 no-padding">
               <div class="dynamic-instructions">
-                Select items to perform actions on them.
+                  <a href="{{breadcrumbs[0][0]}}">JoinQuant Research</a>&nbsp;<span style="color:#d80016">Beta</span> 
               </div>
               <div class="dynamic-buttons">
                   <button title="Duplicate selected" class="duplicate-button btn btn-default btn-xs">Duplicate</button>
@@ -37,6 +37,9 @@ data-terminals-available="{{terminals_available}}"
             </div>
             <div class="col-sm-4 no-padding tree-buttons">
               <div class="pull-right">
+                <div class="btn-group">
+                    <button id="refresh_notebook_list" title="Refresh notebook list" class="btn btn-default btn-xs"><i class="fa fa-refresh"></i></button>
+                </div>
                 <form id='alternate_upload'  class='alternate_upload'>
                   <span id="notebook_list_info">
                   <span class="btn btn-xs btn-default btn-upload">
@@ -69,9 +72,6 @@ data-terminals-available="{{terminals_available}}"
                     <li role="presentation" class="divider"></li>
                     <li role="presentation" class="dropdown-header" id="notebook-kernels">Notebooks</li>
                   </ul>
-                </div>
-                <div class="btn-group">
-                    <button id="refresh_notebook_list" title="Refresh notebook list" class="btn btn-default btn-xs"><i class="fa fa-refresh"></i></button>
                 </div>
               </div>
             </div>

@@ -1,5 +1,5 @@
 ///online or offline
-if(window.location.host=='open.joinquant.com:8023'){
+if(window.location.host.indexOf('joinquant.com') >= 0){
         var g_pHost = "https://www.joinquant.com";
 }else{
         var g_pHost = "http://www.kuanke100.com";

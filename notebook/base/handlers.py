@@ -147,6 +147,10 @@ class IPythonHandler(AuthenticatedHandler):
     @property
     def mathjax_url(self):
         return self.settings.get('mathjax_url', '')
+
+    @property
+    def nbextensions_url(self):
+        return self.settings.get('nbextensions_url', self.base_url + 'nbextensions')
     
     @property
     def base_url(self):

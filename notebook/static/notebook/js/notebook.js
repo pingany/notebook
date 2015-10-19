@@ -317,6 +317,11 @@ define(function (require) {
             // IE treats null as a string.  Instead just return which will avoid the dialog.
             return;
         };
+
+        window.onunload = function() {
+            var noop = function() {};
+            that.session.delete(noop, noop);
+        };
     };
     
     /**

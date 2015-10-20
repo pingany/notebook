@@ -1,9 +1,11 @@
+
 ///online or offline
 if(window.location.host.indexOf('joinquant.com') >= 0){
         var g_pHost = "https://www.joinquant.com";
 }else{
         var g_pHost = "http://www.kuanke100.com";
 }
+
 ///when open link in new window,replace its href
 $(document).ready(function(){
     $('body').delegate('a','click',function(){
@@ -23,3 +25,23 @@ function ajustHeight(){
     iframe.src = urlC+"#"+hashH;
     document.body.appendChild(iframe);
 }
+
+require([
+    'base/js/namespace'
+], function(IPython) {
+    IPython.hook_new_window_url = function(url) {
+        if (url && url.indexOf('www.joinquant.com') < 0) {
+            url = g_pHost+"/research?target=research&url="+url
+        }
+        return url;
+    };
+    
+    // var raw_open = window.open;
+
+    // window.open = function(url, target) {
+    //     if (url && (!target || target == '_blank') && url.indexOf('www.joinquant.com') < 0) {
+    //         url = g_pHost+"/research?target=research&url="+url
+    //     }
+    //     raw_open(url, target)
+    // }
+});

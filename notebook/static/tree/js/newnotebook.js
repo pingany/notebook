@@ -84,6 +84,9 @@ define([
                 if (kernel_name) {
                     url += "?kernel_name=" + kernel_name;
                 }
+                if (IPython.hook_new_window_url) {
+                    url = IPython.hook_new_window_url(url);
+                }
                 w.location = url;
         }).catch(function (e) {
             w.close();

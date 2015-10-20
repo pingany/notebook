@@ -78,6 +78,9 @@ define([
                     var url = utils.url_join_encode(
                         that.base_url, 'edit', data.path
                     );
+                    if (IPython.hook_new_window_url) {
+                        url = IPython.hook_new_window_url(url);
+                    }
                     w.location = url;
                 }).catch(function (e) {
                     w.close();

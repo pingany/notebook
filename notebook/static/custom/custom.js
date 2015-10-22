@@ -9,8 +9,9 @@ if(window.location.host.indexOf('joinquant.com') >= 0){
 ///when open link in new window,replace its href
 $(document).ready(function(){
     $('body').delegate('a','click',function(){
-        if($(this).attr("target")=="_blank"){
-             $(this).attr("href",g_pHost+"/research?target=research&url="+$(this).attr("href"));
+        var href = $(this).attr('href');
+        if($(this).attr("target")=="_blank" && (href.slice(0, 4) != 'http' || href.indexOf('open.joinquant.com') >= 0)) {
+             $(this).attr("href",g_pHost+"/research?target=research&url="+href);
         }
     });
     setTimeout("ajustHeight()", 300)

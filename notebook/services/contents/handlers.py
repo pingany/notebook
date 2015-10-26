@@ -348,7 +348,8 @@ class CloneUrlHandler(IPythonHandler):
         filename = self.contents_manager.increment_filename(filename, '/', insert='-Clone')
         model = yield gen.maybe_future(self.contents_manager.new(model, '/'+filename))
         validate_model(model, expect_content=False)
-        self.redirect('/notebooks/'+filename)
+        self.redirect(url_path_join(
+                self.base_url, 'notebooks', filename))
 
     post = get
     pass

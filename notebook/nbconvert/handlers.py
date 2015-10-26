@@ -81,10 +81,13 @@ class NbconvertFileHandler(IPythonHandler):
     SUPPORTED_METHODS = ('GET',)
 
     # upload a file, return path
-    def upload_file(self, content):
-        path = '/share/%s.html' % (md5(content))
+    def upload_file(self, html, ipynb):
+        html_path = '/share/%s.html' % (md5(html))
+        ipynb_path = html_path.replace('html', 'ipynb')
         from research_api import upload2yun
-        return upload2yun(path, content)
+        upyun_html_path = upload2yun(html_path, html)
+        upyun_ipynb_path = upload2yun(ipynb_path, ipynb)
+        return upyun_html_path
     
     @web.authenticated
     def get(self, format, path):
@@ -131,7 +134,8 @@ class NbconvertFileHandler(IPythonHandler):
 
         if self.get_argument('upload', 'false').lower() == 'true':
             import json
-            uploaded_path = self.upload_file(output.encode('utf-8'))
+            uploaded_path = self.upload_file(output.encode('utf-8'), \
+                    json.dumps(model['content']).encode('utf-8'))
             self.finish(json.dumps({
                 'path':path,
                 'upyun_path':uploaded_path,

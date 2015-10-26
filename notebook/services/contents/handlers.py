@@ -325,6 +325,33 @@ class NotebooksRedirectHandler(IPythonHandler):
 
     put = patch = post = delete = get
 
+class CloneUrlHandler(IPythonHandler):
+    SUPPORTED_METHODS = ('GET', 'POST')
+
+    @web.authenticated
+    @gen.coroutine
+    def get(self):
+        import json
+        from tornado.httpclient import AsyncHTTPClient
+
+        url = self.get_argument('url')
+        filename = self.get_argument('filename')
+        filename = filename.rsplit('/', 1)[-1]
+        self.log.info("clone url, filename = %s, url = %s" % (filename, url))
+        if url.endswith('.html'):
+            url = url.replace('.html', '.ipynb')
+        http_client = AsyncHTTPClient()
+        response = yield http_client.fetch(url)
+        ipynb = response.body.decode('utf-8')
+        # self.log.debug("cloen url, ipynb = %s" % (ipynb))
+        model = {'type':'notebook', 'content': json.loads(ipynb)}
+        filename = self.contents_manager.increment_filename(filename, '/', insert='-Clone')
+        model = yield gen.maybe_future(self.contents_manager.new(model, '/'+filename))
+        validate_model(model, expect_content=False)
+        self.redirect('/notebooks/'+filename)
+
+    post = get
+    pass
 
 #-----------------------------------------------------------------------------
 # URL to handler mappings
@@ -339,4 +366,5 @@ default_handlers = [
         ModifyCheckpointsHandler),
     (r"/api/contents%s" % path_regex, ContentsHandler),
     (r"/api/notebooks/?(.*)", NotebooksRedirectHandler),
+    (r"/clone_url/?", CloneUrlHandler),
 ]

@@ -3,7 +3,7 @@
 if(window.location.host.indexOf('joinquant.com') >= 0){
         var g_pHost = "https://www.joinquant.com";
 }else{
-        var g_pHost = "http://www.kuanke100.com";
+        var g_pHost = "http://101.200.217.122";
 }
 
 ///when open link in new window,replace its href
@@ -36,7 +36,7 @@ require([
         }
         return url;
     };
-    
+
     // var raw_open = window.open;
 
     // window.open = function(url, target) {

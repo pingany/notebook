@@ -14,7 +14,7 @@ $(document).ready(function(){
              $(this).attr("href",g_pHost+"/research?target=research&url="+href);
         }
     });
-    setTimeout("ajustHeight()", 300)
+    //setTimeout("ajustHeight()", 300)
 });
 ///ajust parent window's height according to this window's height
 function ajustHeight(){

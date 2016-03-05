@@ -18,6 +18,8 @@ from nbformat import from_dict
 from ipython_genutils.py3compat import cast_bytes
 from ipython_genutils import text
 
+from notebook.utils import quote
+
 def find_resource_files(output_files_dir):
     files = []
     for dirpath, dirnames, filenames in os.walk(output_files_dir):
@@ -38,7 +40,7 @@ def respond_zip(handler, name, output, resources):
     # Headers
     zip_filename = os.path.splitext(name)[0] + '.zip'
     handler.set_header('Content-Disposition',
-                       'attachment; filename="%s"' % zip_filename)
+                       'attachment; filename="%s"' % quote(zip_filename))
     handler.set_header('Content-Type', 'application/zip')
 
     # Prepare the zip file
@@ -60,13 +62,13 @@ def get_exporter(format, **kwargs):
         from nbconvert.exporters.export import exporter_map
     except ImportError as e:
         raise web.HTTPError(500, "Could not import nbconvert: %s" % e)
-    
+
     try:
         Exporter = exporter_map[format]
     except KeyError:
         # should this be 400?
         raise web.HTTPError(404, u"No exporter for format: %s" % format)
-    
+
     try:
         return Exporter(**kwargs)
     except Exception as e:
@@ -75,7 +77,7 @@ def get_exporter(format, **kwargs):
 def md5(c):
     import hashlib
     return hashlib.md5(c).hexdigest()
-    
+
 class NbconvertFileHandler(IPythonHandler):
 
     SUPPORTED_METHODS = ('GET',)
@@ -88,12 +90,12 @@ class NbconvertFileHandler(IPythonHandler):
         upyun_html_path = upload2yun(html_path, html)
         upyun_ipynb_path = upload2yun(ipynb_path, ipynb)
         return upyun_html_path
-    
+
     @web.authenticated
     def get(self, format, path):
-        
+
         exporter = get_exporter(format, config=self.config, log=self.log)
-        
+
         path = path.strip('/')
         model = self.contents_manager.get(path=path)
         name = model['name']
@@ -125,7 +127,7 @@ class NbconvertFileHandler(IPythonHandler):
         if self.get_argument('download', 'false').lower() == 'true':
             filename = os.path.splitext(name)[0] + resources['output_extension']
             self.set_header('Content-Disposition',
-                               'attachment; filename="%s"' % filename)
+                               'attachment; filename="%s"' % quote(filename))
 
         # MIME type
         if exporter.output_mimetype:
@@ -149,11 +151,11 @@ class NbconvertPostHandler(IPythonHandler):
     @web.authenticated
     def post(self, format):
         exporter = get_exporter(format, config=self.config)
-        
+
         model = self.get_json_body()
         name = model.get('name', 'notebook.ipynb')
         nbnode = from_dict(model['content'])
-        
+
         try:
             output, resources = exporter.from_notebook_node(nbnode, resources={
                 "metadata": {"name": name[:name.rfind('.')],},

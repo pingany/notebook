@@ -13,7 +13,7 @@ define([
      * should be used to start kernels and then shut them down -- for
      * all other operations, the kernel object should be used.
      *
-     * Preliminary documentation for the REST API is at 
+     * Preliminary documentation for the REST API is at
      * https://github.com/ipython/ipython/wiki/IPEP-16%3A-Notebook-multi-directory-dashboard-and-URL-mapping#sessions-api
      *
      * Options should include:
@@ -231,6 +231,17 @@ define([
         this.delete(start, start);
     };
 
+    Session.prototype.heart_beat = function () {
+        $.ajax(this.session_url, {
+            processData: false,
+            cache: false,
+            type: "HEAD",
+            dataType: "json",
+            success: function(){},
+            error: function(){ console.log('heart_beat failed'); }
+        });
+    };
+
     // Helper functions
 
     /**
@@ -311,9 +322,9 @@ define([
         this.name = "SessionAlreadyStarting";
         this.message = (message || "");
     };
-    
+
     SessionAlreadyStarting.prototype = Error.prototype;
-    
+
     return {
         Session: Session,
         SessionAlreadyStarting: SessionAlreadyStarting

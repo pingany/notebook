@@ -12,23 +12,28 @@ from traitlets.config.configurable import LoggingConfigurable
 from ipython_genutils.py3compat import unicode_type
 from traitlets import Instance
 
+from tornado.ioloop import IOLoop
 
 class SessionManager(LoggingConfigurable):
 
     kernel_manager = Instance('notebook.services.kernels.kernelmanager.MappingKernelManager')
     contents_manager = Instance('notebook.services.contents.manager.ContentsManager')
-    
+
     # Session database initialized below
     _cursor = None
     _connection = None
     _columns = {'session_id', 'path', 'kernel_id'}
-    
+
+    def __init__(self, **kwargs):
+        LoggingConfigurable.__init__(self, **kwargs)
+        self.delete_session_timers = {}
+
     @property
     def cursor(self):
         """Start a cursor and create a database called 'session'"""
         if self._cursor is None:
             self._cursor = self.connection.cursor()
-            self._cursor.execute("""CREATE TABLE session 
+            self._cursor.execute("""CREATE TABLE session
                 (session_id, path, kernel_id)""")
         return self._cursor
 
@@ -39,7 +44,7 @@ class SessionManager(LoggingConfigurable):
             self._connection = sqlite3.connect(':memory:')
             self._connection.row_factory = sqlite3.Row
         return self._connection
-        
+
     def __del__(self):
         """Close connection once SessionManager closes"""
         self.cursor.close()
@@ -69,11 +74,11 @@ class SessionManager(LoggingConfigurable):
 
     def save_session(self, session_id, path=None, kernel_id=None):
         """Saves the items for the session with the given session_id
-        
+
         Given a session_id (and any other of the arguments), this method
         creates a row in the sqlite session database that holds the information
         for a session.
-        
+
         Parameters
         ----------
         session_id : str
@@ -82,7 +87,7 @@ class SessionManager(LoggingConfigurable):
             the path for the given notebook
         kernel_id : str
             a uuid for the kernel associated with this session
-        
+
         Returns
         -------
         model : dict
@@ -95,7 +100,7 @@ class SessionManager(LoggingConfigurable):
 
     def get_session(self, **kwargs):
         """Returns the model for a particular session.
-        
+
         Takes a keyword argument and searches for the value in the session
         database, then returns the rest of the session's info.
 
@@ -108,7 +113,7 @@ class SessionManager(LoggingConfigurable):
         Returns
         -------
         model : dict
-            returns a dictionary that includes all the information from the 
+            returns a dictionary that includes all the information from the
             session described by the kwarg.
         """
         if not kwargs:
@@ -140,17 +145,17 @@ class SessionManager(LoggingConfigurable):
 
     def update_session(self, session_id, **kwargs):
         """Updates the values in the session database.
-        
+
         Changes the values of the session with the given session_id
-        with the values from the keyword arguments. 
-        
+        with the values from the keyword arguments.
+
         Parameters
         ----------
         session_id : str
             a uuid that identifies a session in the sqlite3 database
         **kwargs : str
             the key must correspond to a column title in session database,
-            and the value replaces the current value in the session 
+            and the value replaces the current value in the session
             with session_id.
         """
         self.get_session(session_id=session_id)
@@ -173,7 +178,7 @@ class SessionManager(LoggingConfigurable):
             # The kernel was killed or died without deleting the session.
             # We can't use delete_session here because that tries to find
             # and shut down the kernel.
-            self.cursor.execute("DELETE FROM session WHERE session_id=?", 
+            self.cursor.execute("DELETE FROM session WHERE session_id=?",
                                 (row['session_id'],))
             raise KeyError
 
@@ -206,3 +211,23 @@ class SessionManager(LoggingConfigurable):
         session = self.get_session(session_id=session_id)
         self.kernel_manager.shutdown_kernel(session['kernel']['id'])
         self.cursor.execute("DELETE FROM session WHERE session_id=?", (session_id,))
+        self.remove_session_timer(session_id)
+
+    def remove_session_timer(self, session_id):
+        if self.delete_session_timers.get(session_id):
+            IOLoop.current().remove_timeout(self.delete_session_timers.pop(session_id))
+
+    # heart beat interval: 2 minutes. so delete session if 4 minutes passed after last heartbeat
+    DELETE_SESSION_TIMEOUT_SECONDS = 4 * 60
+
+    def heart_beat(self, session_id):
+        self.remove_session_timer(session_id)
+
+        def timeout():
+            self.log.info('session %s timeout, remove it' % session_id)
+            self.delete_session(session_id)
+            pass
+
+        self.delete_session_timers[session_id] = IOLoop.current().call_later(self.DELETE_SESSION_TIMEOUT_SECONDS, \
+                timeout)
+        pass

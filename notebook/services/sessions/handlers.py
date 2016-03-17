@@ -76,7 +76,7 @@ class SessionRootHandler(APIHandler):
 
 class SessionHandler(APIHandler):
 
-    SUPPORTED_METHODS = ('GET', 'PATCH', 'DELETE')
+    SUPPORTED_METHODS = ('GET', 'PATCH', 'DELETE', 'HEAD')
 
     @web.authenticated
     @json_errors
@@ -85,6 +85,11 @@ class SessionHandler(APIHandler):
         sm = self.session_manager
         model = sm.get_session(session_id=session_id)
         self.finish(json.dumps(model, default=date_default))
+
+    @web.authenticated
+    def head(self, session_id):
+        self.session_manager.heart_beat(session_id)
+        self.finish()
 
     @web.authenticated
     @json_errors

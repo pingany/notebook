@@ -46,3 +46,10 @@ require([
     //     raw_open(url, target)
     // }
 });
+
+
+/**
+ * Display line numbers in Notebook code cell by default
+ * if need to hide, use the "L" shortcut key
+ */
+IPython.Cell.options_default.cm_config.lineNumbers = true;

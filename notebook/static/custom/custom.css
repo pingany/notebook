@@ -17,3 +17,30 @@ This will always be an empty file in IPython
 .tt_dropdown_menu .col-sm-2,.tt_dropdown_menu .col-sm-10{padding-left:15px;padding-right: 15px}
 .tt_dropdown_menu .tt_btns{margin-right:30px;padding-bottom:10px}
 .dropdown-box.open .dropdown-toggle:after { content: ' '; background-color: #fff; position: absolute; bottom: -5px; left: 50%; width: 10px; height: 10px; border: 1px solid #b6b6b6; border-width: 1px 0 0 1px; z-index: 1001; margin-left: -5px; -webkit-transform: rotate(45deg); -ms-transform: rotate(45deg); transform: rotate(45deg) }
+
+
+/* Code block
+------------------------------------------------------------------------------*/
+.CodeMirror pre {
+    font-family: 'Consolas', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 16px;
+}
+
+div.input_prompt {
+    font-family: 'Consolas', 'Menlo', 'Ubuntu Mono', monospace;
+}
+
+.completions select {
+    font-family: 'Consolas', 'Menlo', 'Ubuntu Mono', monospace;
+}
+
+/* Markdown
+------------------------------------------------------------------------------*/
+.rendered_html pre, .rendered_html code {
+    background: #E0E0E0;
+}
+
+.rendered_html pre {
+    margin: .5em 1em;
+    padding: .5em 1em;
+}

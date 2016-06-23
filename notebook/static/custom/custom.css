@@ -21,16 +21,7 @@ This will always be an empty file in IPython
 
 /* Code block
 ------------------------------------------------------------------------------*/
-.CodeMirror pre {
-    font-family: 'Consolas', 'Menlo', 'Ubuntu Mono', monospace;
-    font-size: 16px;
-}
-
-div.input_prompt {
-    font-family: 'Consolas', 'Menlo', 'Ubuntu Mono', monospace;
-}
-
-.completions select {
+.CodeMirror pre, div.input_prompt, .completions select {
     font-family: 'Consolas', 'Menlo', 'Ubuntu Mono', monospace;
 }
 
